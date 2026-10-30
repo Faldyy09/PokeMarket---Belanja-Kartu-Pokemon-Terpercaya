@@ -1,0 +1,452 @@
+\<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokeMarket - Katalog Produk Kartu TCG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            margin: 0; 
+            background-color: #0f172a; 
+            color: #f8fafc; 
+        }
+        
+        header { 
+            background: rgba(15, 23, 42, 0.9); 
+            backdrop-filter: blur(10px);
+            color: white; 
+            padding: 15px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid #334155; 
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo img { height: 45px; width: auto; transition: transform 0.3s; }
+        .logo img:hover { transform: scale(1.05); }
+        
+        nav a { 
+            color: #cbd5e1; 
+            text-decoration: none; 
+            margin-left: 25px; 
+            font-weight: 500; 
+            transition: color 0.2s;
+        }
+        nav a:hover, nav a.aktif { color: #ffcc00; text-shadow: 0 0 10px rgba(255,204,0,0.5); }
+
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+
+        .header-banner {
+            width: 100%;
+            max-height: 320px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            border: 3px solid #ffcc00;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .catalog-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .catalog-header h1 { color: #ffcc00; font-size: 32px; margin-bottom: 8px; }
+        .catalog-header p { color: #94a3b8; font-size: 15px; }
+
+        .kategori-title {
+            font-size: 20px;
+            color: #ffffff;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ffcc00;
+            padding-left: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .katalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card-produk {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            padding: 18px;
+        }
+
+        .card-produk:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(204,0,0,0.4);
+            border-color: #ffcc00;
+        }
+
+        .card-produk img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #0f172a;
+            padding: 8px;
+        }
+
+        .card-produk h3 {
+            font-size: 15px;
+            margin: 12px 0 6px 0;
+            color: #f8fafc;
+        }
+
+        .card-produk .harga {
+            font-weight: 700;
+            color: #ff4d4d;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .btn-detail {
+            background-color: #ffcc00;
+            color: #0f172a;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-detail:hover { background-color: #e6b800; }
+
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0; top: 0; width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-top: 6px solid #cc0000;
+        }
+
+        .modal-content img {
+            width: 180px;
+            height: auto;
+            border-radius: 8px;
+            background: #0f172a;
+            padding: 5px;
+        }
+
+        .modal-detail h3 { margin-top: 0; color: #ffcc00; font-size: 22px; }
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #94a3b8;
+        }
+        .close-btn:hover { color: #ffcc00; }
+
+        footer { text-align: center; padding: 30px; color: #64748b; font-size: 14px; margin-top: 60px; border-top: 1px solid #334155; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="index.html">
+                <img src="imgframe/Pokémarket Indonesia Logo.png" alt="Logo PokeMarket">
+            </a>
+        </div>
+        <nav>
+            <a href="index.html">Beranda</a>
+            <a href="katalog.html" class="aktif">Katalog Kartu</a>
+            <a href="order.html">Cara Pemesanan</a>
+            <a href="contact.html">Hubungi Kami</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <img src="imgframe/banner.jpg" alt="Banner PokeMarket" class="header-banner">
+
+        <div class="catalog-header">
+            <h1>PRODUCT CATALOG</h1>
+            <p>🌟 100% Original • Jaminan Kualitas Mint • Gratis Ongkir Seluruh Indonesia</p>
+        </div>
+
+        <!-- 1. ILLUSTRATION RARE (5 Kartu) -->
+        <h3 class="kategori-title">1. Illustration Rare</h3>
+        <div class="katalog-grid">
+            <div class="card-produk" onclick="bukaModal('Holo Cocoro Illustrator', 'Rp 500.000', 'Kartu edisi khusus promo dengan foil holo emas.', 'imgframe/HOLOCOCORO.jpg')">
+                <img src="imgframe/HOLOCOCORO.jpg" alt="Holo Cocoro">
+                <h3>Holo Cocoro Illustrator</h3>
+                <p class="harga">Rp 500.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Gardevoir ex Special Art', 'Rp 450.000', 'Ilustrasi emosional Gardevoir bersama Ralts dan Kirlia.', 'https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg')">
+                <img src="https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg" alt="Gardevoir ex">
+                <h3>Gardevoir ex SAR</h3>
+                <p class="harga">Rp 450.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Magikarp Illustration Rare', 'Rp 600.000', 'Magikarp melompati air terjun kecil dengan detail luar biasa.', 'https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp')">
+                <img src="https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp" alt="Magikarp">
+                <h3>Magikarp IR</h3>
+                <p class="harga">Rp 600.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Poliwhirl Illustration Rare', 'Rp 175.000', 'Poliwhirl berjalan di tengah hujan kota malam hari.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10" alt="Poliwhirl">
+                <h3>Poliwhirl IR</h3>
+                <p class="harga">Rp 175.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Charizard ex Illustration Rare', 'Rp 750.000', 'Pertarungan epik Charmander evolution line di alam bebas.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10" alt="Charizard ex IR">
+                <h3>Charizard ex IR</h3>
+                <p class="harga">Rp 750.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+        </div>
+
+        <!-- 2. HOLOFIL PARAREL (5 Kartu) -->
+        <h3 class="kategori-title">2. Holofil Pararel</h3>
+        <div class="katalog-grid">
+            <div class="card-produk" onclick="bukaModal('Charizard VMAX Secret Rare', 'Rp 350.000', 'Kartu langka kondisi Mint edisi Darkness Ablaze.', 'https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg')">
+                <img src="https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg" alt="Charizard VMAX">
+                <h3>Charizard VMAX</h3>
+                <p class="harga">Rp 350.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Blastoise Holo Reverse', 'Rp 200.000', 'Seri klasik dengan kilau berkilauan unik.', 'https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp')">
+                <img src="https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp" alt="Blastoise">
+                <h3>Blastoise Holo Reverse</h3>
+                <p class="harga">Rp 200.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Pikachu Holo Pararel', 'Rp 180.000', 'Pikachu dengan pola bintang berpendar di latar belakang.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10" alt="Pikachu">
+                <h3>Pikachu Holo Pararel</h3>
+                <p class="harga">Rp 180.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Mewtwo Holo Pararel', 'Rp 220.000', 'Efek kilau kosmik psikedelik pada kartu Mewtwo.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10" alt="Mewtwo">
+                <h3>Mewtwo Holo Pararel</h3>
+                <p class="harga">Rp 220.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Lugia Holo Pararel', 'Rp 290.000', 'Penjaga Lautan dalam balutan efek foil garis gelombang.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10" alt="Lugia">
+                <h3>Lugia Holo Pararel</h3>
+                <p class="harga">Rp 290.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+        </div>
+
+        <!-- 3. GOLD STAR (5 Kartu) -->
+        <h3 class="kategori-title">3. Gold Star</h3>
+        <div class="katalog-grid">
+            <div class="card-produk" onclick="bukaModal('Mewtwo VSTAR Ultra Rare', 'Rp 275.000', 'Efek tekstur khusus lengkap dengan protective sleeve.', 'https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp')">
+                <img src="https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp" alt="Mewtwo VSTAR">
+                <h3>Mewtwo VSTAR</h3>
+                <p class="harga">Rp 275.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Rayquaza Gold Star', 'Rp 1.500.000', 'Salah satu kartu paling ikonik dan dicari kolektor elite.', 'https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg')">
+                <img src="https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg" alt="Rayquaza Gold">
+                <h3>Rayquaza Gold Star</h3>
+                <p class="harga">Rp 1.500.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Pikachu Gold Star', 'Rp 1.100.000', 'Pikachu bersinar emas dengan border foil mengkilap.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10" alt="Pikachu Gold">
+                <h3>Pikachu Gold Star</h3>
+                <p class="harga">Rp 1.100.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Celebi Gold Star', 'Rp 900.000', 'Edisi langka dengan artwork bersinar di tengah hutan.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10" alt="Celebi Gold">
+                <h3>Celebi Gold Star</h3>
+                <p class="harga">Rp 900.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Gyarados Gold Star', 'Rp 1.200.000', 'Versi Shiny Gyarados dengan aksen emas mewah.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10" alt="Gyarados Gold">
+                <h3>Gyarados Gold Star</h3>
+                <p class="harga">Rp 1.200.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+        </div>
+
+        <!-- 4. RAINBOW RARE (5 Kartu) -->
+        <h3 class="kategori-title">4. Rainbow Rare</h3>
+        <div class="katalog-grid">
+            <div class="card-produk" onclick="bukaModal('Rayquaza VMAX Rainbow', 'Rp 450.000', 'Efek warna pelangi yang sangat memukau.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10" alt="Rayquaza Rainbow">
+                <h3>Rayquaza VMAX (Rainbow)</h3>
+                <p class="harga">Rp 450.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Charizard VMAX Rainbow', 'Rp 550.000', 'Kilau gradasi pelangi menyeluruh pada tubuh Charizard.', 'https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg')">
+                <img src="https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg" alt="Charizard Rainbow">
+                <h3>Charizard VMAX (Rainbow)</h3>
+                <p class="harga">Rp 550.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Pikachu VMAX Rainbow', 'Rp 400.000', 'Pikachu raksasa Max Factor berbalut warna pelangi.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10" alt="Pikachu Rainbow">
+                <h3>Pikachu VMAX (Rainbow)</h3>
+                <p class="harga">Rp 400.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Sylveon VMAX Rainbow', 'Rp 320.000', 'Koleksi Eeveelution tercantik dengan tekstur pelangi.', 'https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp')">
+                <img src="https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp" alt="Sylveon Rainbow">
+                <h3>Sylveon VMAX (Rainbow)</h3>
+                <p class="harga">Rp 320.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Arceus VSTAR Rainbow', 'Rp 480.000', 'Sang Pencipta Pokémon dalam balutan cahaya pelangi suci.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10" alt="Arceus Rainbow">
+                <h3>Arceus VSTAR (Rainbow)</h3>
+                <p class="harga">Rp 480.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+        </div>
+
+        <!-- 5. RARE (5 Kartu) -->
+        <h3 class="kategori-title">5. Rare</h3>
+        <div class="katalog-grid">
+            <div class="card-produk" onclick="bukaModal('Umbreon V', 'Rp 150.000', 'Kartu tipe Dark dengan ilustrasi keren.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10" alt="Umbreon V">
+                <h3>Umbreon V</h3>
+                <p class="harga">Rp 150.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Lucario V', 'Rp 120.000', 'Petarung tangguh dengan postur siap bertempur.', 'https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp')">
+                <img src="https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp" alt="Lucario V">
+                <h3>Lucario V</h3>
+                <p class="harga">Rp 120.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Gengar V', 'Rp 160.000', 'Senyuman misterius Gengar dalam kegelapan malam.', 'https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg')">
+                <img src="https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg" alt="Gengar V">
+                <h3>Gengar V</h3>
+                <p class="harga">Rp 160.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Greninja V', 'Rp 140.000', 'Ninja bayangan air siap melancarkan serangan kejutan.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10" alt="Greninja V">
+                <h3>Greninja V</h3>
+                <p class="harga">Rp 140.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Dragonite V', 'Rp 130.000', 'Naga ramah berukuran besar dengan kekuatan angin topan.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10" alt="Dragonite V">
+                <h3>Dragonite V</h3>
+                <p class="harga">Rp 130.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+        </div>
+
+        <!-- 6. BASIC (5 Kartu) -->
+        <h3 class="kategori-title">6. Basic</h3>
+        <div class="katalog-grid">
+            <div class="card-produk" onclick="bukaModal('Charmander Basic', 'Rp 25.000', 'Kartu dasar yang cocok untuk pemula.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZYA9RB4hwR47xFm2GatCZ3a5K_L8EQ9pmy8pmDa5_UQ&s=10" alt="Charmander">
+                <h3>Charmander Basic</h3>
+                <p class="harga">Rp 25.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Bulbasaur Basic', 'Rp 25.000', 'Pokémon tipe rumput pemula yang imut dan setia.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMSPqTRdnyHXcHm1_Xc0UwIOHI6SftzVxWfnu0ebrqOg&s=10" alt="Bulbasaur">
+                <h3>Bulbasaur Basic</h3>
+                <p class="harga">Rp 25.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Squirtle Basic', 'Rp 25.000', 'Kura-kura air kecil yang lincah di dalam kolam.', 'https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp')">
+                <img src="https://samuraiswordtokyo.com/wp-content/uploads/2026/10/66b4b560-8828-4792-9044-a3e9ebc51f7b.webp" alt="Squirtle">
+                <h3>Squirtle Basic</h3>
+                <p class="harga">Rp 25.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Pikachu Basic', 'Rp 30.000', 'Maskot utama dunia Pokémon dengan pipi berlistrik.', 'https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg')">
+                <img src="https://i.etsystatic.com/22089514/r/il/cc8d22/8135156022/il_570xN.8135156022_4oou.jpg" alt="Pikachu Basic">
+                <h3>Pikachu Basic</h3>
+                <p class="harga">Rp 30.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+            <div class="card-produk" onclick="bukaModal('Eevee Basic', 'Rp 30.000', 'Pokémon dengan potensi evolusi tanpa batas.', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10')">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6NqiejFNvI5ZEFFoojLApfPfptsrZfqbL_nn2AKg4ww&s=10" alt="Eevee">
+                <h3>Eevee Basic</h3>
+                <p class="harga">Rp 30.000</p>
+                <button class="btn-detail">Lihat Detail</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="modalDetail" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="tutupModal()">&times;</span>
+            <img id="modalGambar" src="" alt="Detail Kartu">
+            <div class="modal-detail">
+                <h3 id="modalJudul"></h3>
+                <p id="modalHarga" style="color: #ff4d4d; font-weight: bold; font-size: 18px;"></p>
+                <p id="modalDeskripsi" style="font-size: 14px; color: #cbd5e1; line-height: 1.5;"></p>
+                <a href="order.html" style="display: inline-block; background-color: #cc0000; color: white; padding: 10px 16px; text-decoration: none; border-radius: 6px; margin-top: 15px; font-size: 14px; font-weight: bold;">Pesan Sekarang</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 PokeMarket Indonesia. Hak Cipta Dilindungi.</footer>
+
+    <script>
+        function bukaModal(judul, harga, deskripsi, gambar) {
+            document.getElementById('modalJudul').innerText = judul;
+            document.getElementById('modalHarga').innerText = harga;
+            document.getElementById('modalDeskripsi').innerText = deskripsi;
+            document.getElementById('modalGambar').src = gambar;
+            document.getElementById('modalDetail').style.display = 'flex';
+        }
+
+        function tutupModal() {
+            document.getElementById('modalDetail').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('modalDetail');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
